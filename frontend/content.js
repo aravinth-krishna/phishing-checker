@@ -200,6 +200,76 @@ function loadOptions() {
   });
 }
 
+function buildHoverTooltipData(url, heur) {
+  const parsed = new URL(url);
+  const domain = parsed.hostname;
+
+  return {
+    domain,
+    score: heur.score ?? "N/A",
+    https: parsed.protocol === "https:" ? "Yes" : "No",
+
+    sevText:
+      heur.label === "phishing"
+        ? "High Risk — Possible Phishing"
+        : heur.label === "suspicious"
+        ? "Medium Risk — Suspicious"
+        : "Safe Link",
+
+    barClass:
+      heur.label === "phishing"
+        ? "severity-phishing"
+        : heur.label === "suspicious"
+        ? "severity-suspicious"
+        : "severity-safe",
+  };
+}
+
+// --------------------------------------------------
+// Modern Custom Tooltip (replaces ugly title tooltip)
+// --------------------------------------------------
+let tooltip = null;
+
+function showTooltip(link, data, x, y) {
+  if (!tooltip) {
+    tooltip = document.createElement("div");
+    tooltip.className = "phish-tooltip";
+    document.body.appendChild(tooltip);
+  }
+
+  tooltip.innerHTML = `
+    <div class="severity-bar ${data.barClass}"></div>
+    <div class="title">${data.sevText}</div>
+
+    <div class="row"><b>Domain:</b> ${data.domain}</div>
+    <div class="row"><b>HTTPS:</b> ${data.https}</div>
+    <div class="row"><b>Score:</b> ${data.score}</div>
+  `;
+
+  const tooltipWidth = 260;
+  const tooltipHeight = 120;
+
+  let left = x + 16;
+  let top = y + 16;
+
+  if (left + tooltipWidth > window.innerWidth) {
+    left = x - tooltipWidth - 16;
+  }
+
+  if (top + tooltipHeight > window.innerHeight) {
+    top = y - tooltipHeight - 16;
+  }
+
+  tooltip.style.left = left + "px";
+  tooltip.style.top = top + "px";
+
+  tooltip.classList.add("visible");
+}
+
+function hideTooltip() {
+  if (tooltip) tooltip.classList.remove("visible");
+}
+
 // Remove previous classes before fresh scan
 document
   .querySelectorAll("a.phishing-warning, a.phishing-safe, a.phishing-mixed")
@@ -268,9 +338,15 @@ async function scanLinks() {
     total++;
     const href = link.href;
     const result = await checkUrl(href);
-    link.title = `Status: ${result.label}\nScore: ${
-      result.score?.toFixed?.(2) ?? result.score
-    }`;
+    const data = buildHoverTooltipData(href, result);
+
+    link.removeAttribute("title");
+
+    link.addEventListener("mousemove", (e) =>
+      showTooltip(link, data, e.clientX, e.clientY)
+    );
+
+    link.addEventListener("mouseleave", hideTooltip);
 
     if (result.label === "phishing") {
       link.classList.add("phishing-warning");

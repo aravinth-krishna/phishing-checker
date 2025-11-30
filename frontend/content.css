@@ -20,3 +20,52 @@ a.phishing-mixed {
   border-radius: 3px;
   padding: 2px;
 }
+
+.phish-tooltip {
+  position: fixed;
+  z-index: 999999;
+  max-width: 260px;
+  background: rgba(30, 30, 30, 0.96);
+  color: white;
+  padding: 12px 14px;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  font-size: 13px;
+  line-height: 1.4;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.phish-tooltip.visible {
+  opacity: 1;
+  transform: translateY(0px);
+}
+
+.phish-tooltip .severity-bar {
+  height: 4px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+}
+
+.severity-safe {
+  background: #28c76f;
+}
+.severity-suspicious {
+  background: #ff9f43;
+}
+.severity-phishing {
+  background: #ea5455;
+}
+
+.phish-tooltip .title {
+  font-weight: bold;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.phish-tooltip .row {
+  margin-bottom: 4px;
+  opacity: 0.85;
+}
