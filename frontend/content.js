@@ -72,9 +72,10 @@ function heuristicFlag(url) {
     const atSign = u.includes("@");
 
     let score = 0;
-    if (hasKeyword) score += 0.4;
+    if (OPTIONS.highlightLogin && hasKeyword) score += 0.4;
+    if (OPTIONS.highlightLong && isLong) score += 0.15;
+
     if (isIp) score += 0.25;
-    if (isLong) score += 0.15;
     if (noHttps) score += 0.1;
     if (puny) score += 0.2;
     if (atSign) score += 0.2;
@@ -179,11 +180,46 @@ function exposeBlockedUrlsToPage() {
   (document.head || document.documentElement).appendChild(script);
 }
 
+let OPTIONS = {
+  highlightNav: true,
+  highlightLong: true,
+  highlightLogin: true,
+};
+
+function loadOptions() {
+  return new Promise((resolve) => {
+    chrome.storage.local.get(["options"], (res) => {
+      OPTIONS = {
+        highlightNav: res.options?.highlightNav ?? true,
+        highlightLong: res.options?.highlightLong ?? true,
+        highlightLogin: res.options?.highlightLogin ?? true,
+      };
+      resolve();
+    });
+  });
+}
+
 async function scanLinks() {
   await loadStoredCache();
   exposeBlockedUrlsToPage();
 
-  const links = Array.from(document.querySelectorAll("a[href]"));
+  let links = Array.from(document.querySelectorAll("a[href]"));
+
+  await loadOptions();
+
+  // Remove navigation items if option enabled
+  if (OPTIONS.highlightNav) {
+    links = links.filter((a) => {
+      return !(
+        a.closest("nav") ||
+        a.closest("header") ||
+        a.closest("footer") ||
+        a.classList.contains("nav-link") ||
+        a.parentElement?.tagName === "NAV"
+      );
+    });
+  }
+
   let total = 0,
     safe = 0,
     suspicious = 0;
@@ -231,11 +267,10 @@ async function scanLinks() {
     if (result.label === "phishing") {
       link.classList.add("phishing-warning");
       suspicious++;
-      saveToStoredCache(href)
-        .then(() => {
-          exposeBlockedUrlsToPage();
-        })
-        .catch(() => {});
+      saveToStoredCache(href);
+    } else if (result.label === "suspicious") {
+      link.classList.add("phishing-mixed");
+      suspicious++;
     } else {
       link.classList.add("phishing-safe");
       safe++;
@@ -245,7 +280,14 @@ async function scanLinks() {
   chrome.runtime.sendMessage({ type: "stats", total, safe, suspicious });
 }
 
-scanLinks();
+chrome.storage.local.get(["enabled"], (res) => {
+  if (res.enabled) scanLinks();
+});
+
 chrome.runtime.onMessage.addListener((msg) => {
-  if (msg.type === "rescan") scanLinks();
+  if (msg.type === "rescan") {
+    chrome.storage.local.get(["enabled"], (res) => {
+      if (res.enabled) scanLinks();
+    });
+  }
 });

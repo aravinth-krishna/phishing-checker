@@ -97,13 +97,13 @@ manualBtn.addEventListener("click", () => {
 
     if (label === "phishing") {
       manualResult.style.color = "red";
-      manualResult.innerText = "🚨 Dangerous (Red)";
+      manualResult.innerText = "🚨 Dangerous";
     } else if (label === "suspicious") {
       manualResult.style.color = "orange";
-      manualResult.innerText = "⚠️ Mixed Risk (Yellow)";
+      manualResult.innerText = "⚠️ Mixed Risk";
     } else {
       manualResult.style.color = "green";
-      manualResult.innerText = "✅ Safe (Green)";
+      manualResult.innerText = "✅ Safe";
     }
   });
 });
