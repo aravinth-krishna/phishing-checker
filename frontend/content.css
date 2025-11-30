@@ -1,0 +1,22 @@
+a.phishing-warning {
+  background-color: rgba(255, 0, 0, 0.2) !important;
+  border: 2px solid red !important;
+  border-radius: 4px;
+  padding: 2px;
+  box-shadow: 0 0 4px rgba(255, 0, 0, 0.4);
+}
+
+a.phishing-safe {
+  background-color: rgba(0, 255, 0, 0.1) !important;
+  border: 2px solid green !important;
+  border-radius: 4px;
+  padding: 2px;
+  box-shadow: 0 0 4px rgba(0, 128, 0, 0.3);
+}
+
+a.phishing-mixed {
+  background-color: rgba(255, 200, 0, 0.2);
+  border: 2px solid orange !important;
+  border-radius: 3px;
+  padding: 2px;
+}

@@ -1,0 +1,87 @@
+body {
+  font-family: "Segoe UI", sans-serif;
+  padding: 15px;
+  width: 260px;
+  background: #f8f9fa;
+  color: #333;
+}
+
+h2 {
+  margin: 0 0 10px;
+  font-size: 18px;
+  text-align: center;
+}
+
+button {
+  padding: 10px;
+  width: 100%;
+  margin-bottom: 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+button.enabled {
+  background: #28a745;
+  color: white;
+}
+
+button.disabled {
+  background: #dc3545;
+  color: white;
+}
+
+#statsBox {
+  background: #fff;
+  padding: 8px;
+  border-radius: 5px;
+  font-size: 14px;
+  margin-bottom: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+#options {
+  font-size: 13px;
+  background: #fff;
+  padding: 8px;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+a.phishing-warning {
+  background-color: rgba(255, 0, 0, 0.2);
+  border: 2px solid red !important;
+  border-radius: 3px;
+  padding: 2px;
+}
+
+a.phishing-safe {
+  background-color: rgba(0, 255, 0, 0.1);
+  border: 2px solid green !important;
+  border-radius: 3px;
+  padding: 2px;
+}
+
+#manualCheckBox {
+  margin-bottom: 12px;
+  background: #fff;
+  padding: 8px;
+  border-radius: 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+#manualCheckBox input {
+  width: 100%;
+  padding: 7px;
+  margin-bottom: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+#manualResult {
+  font-size: 13px;
+  font-weight: bold;
+  margin-top: 5px;
+}

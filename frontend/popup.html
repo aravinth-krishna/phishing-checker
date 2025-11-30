@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Phishing Checker</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <h2>🔒 Phishing Checker</h2>
+
+    <button id="toggleBtn" class="disabled">Enable Scanning</button>
+
+    <div id="statsBox">
+      <p><b>Links Scanned:</b> <span id="total">0</span></p>
+      <p><b>Safe Links:</b> <span id="safe">0</span></p>
+      <p><b>Suspicious Links:</b> <span id="suspicious">0</span></p>
+    </div>
+
+    <div id="manualCheckBox">
+      <input type="text" id="manualUrl" placeholder="Enter a URL to check" />
+      <button id="checkUrlBtn">Check URL</button>
+      <p id="manualResult"></p>
+    </div>
+
+    <hr />
+
+    <div id="options">
+      <label
+        ><input type="checkbox" id="highlightNav" checked /> Ignore Nav
+        Items</label
+      ><br />
+      <label
+        ><input type="checkbox" id="highlightLong" checked /> Flag Long
+        URLs</label
+      ><br />
+      <label
+        ><input type="checkbox" id="highlightLogin" checked /> Flag
+        Login/Verify</label
+      >
+      <button id="clearCacheBtn">Clear Suspicious Cache</button>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

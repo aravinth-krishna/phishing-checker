@@ -1,0 +1,19 @@
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Build output (if any future build system)
+dist/
+build/
+
+# Node (if you add tooling later)
+node_modules/
+npm-debug.log
+
+# Chrome extension temp files
+*.crx
+*.pem
+*.zip
+
+# Cache
+.cache/

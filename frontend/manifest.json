@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "Phishing Link Checker",
+  "version": "1.2",
+  "description": "Detects and highlights suspicious links on webpages, including Gmail.",
+  "permissions": ["storage", "scripting", "tabs", "activeTab", "webNavigation"],
+  "host_permissions": ["<all_urls>"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "24": "icons/icon24.png",
+      "32": "icons/icon32.png",
+      "64": "icons/icon64.png",
+      "128": "icons/icon128.png",
+      "256": "icons/icon256.png",
+      "512": "icons/icon512.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["content.css"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["inject.js", "setBlockedUrls.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
