@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
       chrome.storage.local.set({ enabled: newStatus }, () => {
         updateButton(newStatus);
 
-        // 🔥 Reset stats when scanning is OFF
+        // Reset stats if scanning turned off
         if (!newStatus) {
           chrome.storage.local.set(
             { scan_stats: { total: 0, safe: 0, suspicious: 0 } },
@@ -112,9 +112,14 @@ document.addEventListener("DOMContentLoaded", () => {
               suspiciousEl.innerText = 0;
             }
           );
+
+          // 🔹 Reload the current page to remove CSS highlights
+          getActiveTab((tab) => {
+            if (tab && tab.id) chrome.tabs.reload(tab.id);
+          });
         }
 
-        // 🔄 Only rescan if turning ON
+        // Only rescan when turning ON
         if (newStatus) {
           reloadActiveTabAndThen((tabId) => {
             trySendMessageToTab(tabId, { type: "rescan" });
@@ -140,6 +145,9 @@ document.addEventListener("DOMContentLoaded", () => {
       reloadActiveTabAndThen((tabId) => {
         trySendMessageToTab(tabId, { type: "rescan" });
       });
+
+      // 🔥 Reload popup
+      location.reload();
     });
   });
 
@@ -148,8 +156,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // -------------------------
   clearCacheBtn.addEventListener("click", () => {
     chrome.storage.local.remove("suspicious_cache", () => {
-      reloadActiveTabAndThen((tabId) => {
-        trySendMessageToTab(tabId, { type: "rescan" });
+      // Reload page so all highlights are removed
+      getActiveTab((tab) => {
+        if (tab && tab.id) chrome.tabs.reload(tab.id);
       });
     });
   });
