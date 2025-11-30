@@ -191,11 +191,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // -------------------------
   function updateButton(enabled) {
     if (enabled) {
+      toggleBtn.className = "main-toggle enabled";
       toggleBtn.innerText = "Disable Scanning";
-      toggleBtn.className = "enabled";
     } else {
+      toggleBtn.className = "main-toggle disabled";
       toggleBtn.innerText = "Enable Scanning";
-      toggleBtn.className = "disabled";
     }
   }
 });

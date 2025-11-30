@@ -5,39 +5,62 @@
     <title>Phishing Checker</title>
     <link rel="stylesheet" href="popup.css" />
   </head>
+
   <body>
-    <h2>🔒 Phishing Checker</h2>
-
-    <button id="toggleBtn" class="disabled">Enable Scanning</button>
-
-    <div id="statsBox">
-      <p><b>Links Scanned:</b> <span id="total">0</span></p>
-      <p><b>Safe Links:</b> <span id="safe">0</span></p>
-      <p><b>Suspicious Links:</b> <span id="suspicious">0</span></p>
+    <div class="header">
+      <img src="icons/icon128.png" class="logo" />
+      <h2>Phishing Checker</h2>
     </div>
 
-    <div id="manualCheckBox">
-      <input type="text" id="manualUrl" placeholder="Enter a URL to check" />
-      <button id="checkUrlBtn">Check URL</button>
+    <button id="toggleBtn" class="disabled main-toggle">Enable Scanning</button>
+
+    <div class="card stats">
+      <h3>Scan Statistics</h3>
+      <div class="stat-grid">
+        <div class="stat">
+          <p class="label">Links Scanned</p>
+          <p class="value" id="total">0</p>
+        </div>
+        <div class="stat">
+          <p class="label">Safe</p>
+          <p class="value safe" id="safe">0</p>
+        </div>
+        <div class="stat">
+          <p class="label">Suspicious</p>
+          <p class="value danger" id="suspicious">0</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card manual">
+      <h3>Manual URL Check</h3>
+      <input type="text" id="manualUrl" placeholder="Enter a URL…" />
+      <button id="checkUrlBtn" class="secondary">Check URL</button>
       <p id="manualResult"></p>
     </div>
 
-    <hr />
+    <div class="card options">
+      <h3>Scanning Options</h3>
 
-    <div id="options">
-      <label
-        ><input type="checkbox" id="highlightNav" checked /> Ignore Nav
-        Items</label
-      ><br />
-      <label
-        ><input type="checkbox" id="highlightLong" checked /> Flag Long
-        URLs</label
-      ><br />
-      <label
-        ><input type="checkbox" id="highlightLogin" checked /> Flag
-        Login/Verify</label
-      >
-      <button id="clearCacheBtn">Clear Suspicious Cache</button>
+      <label class="toggle">
+        <input type="checkbox" id="highlightNav" checked />
+        <span class="slider"></span>
+        Ignore Navigation Items
+      </label>
+
+      <label class="toggle">
+        <input type="checkbox" id="highlightLong" checked />
+        <span class="slider"></span>
+        Flag Long URLs
+      </label>
+
+      <label class="toggle">
+        <input type="checkbox" id="highlightLogin" checked />
+        <span class="slider"></span>
+        Flag Login/Verify Links
+      </label>
+
+      <button id="clearCacheBtn" class="mini danger-btn">Clear Cache</button>
     </div>
 
     <script src="popup.js"></script>
