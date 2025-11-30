@@ -94,7 +94,8 @@ function heuristicFlag(url) {
 
 async function checkUrl(url) {
   const heur = heuristicFlag(url);
-  if (heur.score >= 0.6) {
+  // Heuristic is authoritative
+  if (heur.label !== "legitimate") {
     inMemoryCache.set(url, heur);
     if (heur.label === "phishing") saveToStoredCache(url);
     return heur;
@@ -199,6 +200,13 @@ function loadOptions() {
   });
 }
 
+// Remove previous classes before fresh scan
+document
+  .querySelectorAll("a.phishing-warning, a.phishing-safe, a.phishing-mixed")
+  .forEach((a) => {
+    a.classList.remove("phishing-warning", "phishing-safe", "phishing-mixed");
+  });
+
 async function scanLinks() {
   await loadStoredCache();
   exposeBlockedUrlsToPage();
@@ -277,7 +285,9 @@ async function scanLinks() {
     }
   }
 
-  chrome.runtime.sendMessage({ type: "stats", total, safe, suspicious });
+  chrome.storage.local.set({ scan_stats: { total, safe, suspicious } }, () => {
+    chrome.runtime.sendMessage({ type: "stats", total, safe, suspicious });
+  });
 }
 
 chrome.storage.local.get(["enabled"], (res) => {

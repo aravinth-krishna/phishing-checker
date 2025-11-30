@@ -8,6 +8,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const highlightLong = document.getElementById("highlightLong");
   const highlightLogin = document.getElementById("highlightLogin");
 
+  chrome.storage.local.get(["scan_stats"], (res) => {
+    if (res.scan_stats) {
+      totalEl.innerText = res.scan_stats.total;
+      safeEl.innerText = res.scan_stats.safe;
+      suspiciousEl.innerText = res.scan_stats.suspicious;
+    }
+  });
+
   chrome.storage.local.get(["enabled", "options"], (result) => {
     const enabled = result.enabled || false;
     updateButton(enabled);
