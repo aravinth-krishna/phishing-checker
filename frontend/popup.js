@@ -98,13 +98,28 @@ document.addEventListener("DOMContentLoaded", () => {
   toggleBtn.addEventListener("click", () => {
     chrome.storage.local.get(["enabled"], (result) => {
       const newStatus = !result.enabled;
+
       chrome.storage.local.set({ enabled: newStatus }, () => {
         updateButton(newStatus);
 
-        // Reload active tab so content.js is present, then trigger a rescan (with retries)
-        reloadActiveTabAndThen((tabId) => {
-          trySendMessageToTab(tabId, { type: "rescan" });
-        });
+        // 🔥 Reset stats when scanning is OFF
+        if (!newStatus) {
+          chrome.storage.local.set(
+            { scan_stats: { total: 0, safe: 0, suspicious: 0 } },
+            () => {
+              totalEl.innerText = 0;
+              safeEl.innerText = 0;
+              suspiciousEl.innerText = 0;
+            }
+          );
+        }
+
+        // 🔄 Only rescan if turning ON
+        if (newStatus) {
+          reloadActiveTabAndThen((tabId) => {
+            trySendMessageToTab(tabId, { type: "rescan" });
+          });
+        }
       });
     });
   });
