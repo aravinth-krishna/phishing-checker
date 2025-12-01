@@ -94,7 +94,6 @@ function heuristicFlag(url) {
 
 async function checkUrl(url) {
   const heur = heuristicFlag(url);
-  // Heuristic is authoritative
   if (heur.label !== "legitimate") {
     inMemoryCache.set(url, heur);
     if (heur.label === "phishing") saveToStoredCache(url);
@@ -225,9 +224,7 @@ function buildHoverTooltipData(url, heur) {
   };
 }
 
-// --------------------------------------------------
 // Modern Custom Tooltip (replaces ugly title tooltip)
-// --------------------------------------------------
 let tooltip = null;
 
 function showTooltip(link, data, x, y) {
@@ -270,7 +267,6 @@ function hideTooltip() {
   if (tooltip) tooltip.classList.remove("visible");
 }
 
-// Remove previous classes before fresh scan
 document
   .querySelectorAll("a.phishing-warning, a.phishing-safe, a.phishing-mixed")
   .forEach((a) => {
@@ -285,7 +281,6 @@ async function scanLinks() {
 
   await loadOptions();
 
-  // Remove navigation items if option enabled
   if (OPTIONS.highlightNav) {
     links = links.filter((a) => {
       return !(

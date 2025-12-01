@@ -11,7 +11,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   }
 });
 
-// ✔ FIXED: Chrome security API removed → use HTTPS check fallback
 async function checkCertificate(url) {
   try {
     const isHttps = url.startsWith("https://");
@@ -24,7 +23,6 @@ async function checkCertificate(url) {
       };
     }
 
-    // If HTTPS, assume certificate exists (we cannot read it in MV3)
     return {
       label: "legitimate",
       reason: "HTTPS enabled (SSL assumed valid)",

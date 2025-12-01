@@ -1,4 +1,3 @@
-// popup.js — safe messaging + reload + retries
 document.addEventListener("DOMContentLoaded", () => {
   const toggleBtn = document.getElementById("toggleBtn");
   const totalEl = document.getElementById("total");
@@ -14,9 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const manualBtn = document.getElementById("checkUrlBtn");
   const manualResult = document.getElementById("manualResult");
 
-  // -------------------------
   // Helpers: safe messaging
-  // -------------------------
   function getActiveTab(callback) {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (!tabs || !tabs[0]) return callback(null);
@@ -24,8 +21,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Try sending a message to a tab up to `attempts` times with delay.
-  // If tabId is null/undefined, does nothing.
   function trySendMessageToTab(tabId, msg, attempts = 6, delayMs = 300) {
     if (!tabId) return;
     let tries = 0;
@@ -44,20 +39,18 @@ document.addEventListener("DOMContentLoaded", () => {
             );
           }
         } else {
-          // success - nothing to do. If you need the response, handle resp here.
+          // success
         }
       });
     };
     attempt();
   }
 
-  // Reload active tab and call callback after a short delay (gives content script time to attach)
   function reloadActiveTabAndThen(fnAfterReload, waitMs = 450) {
     getActiveTab((tab) => {
       if (!tab) return;
       try {
         chrome.tabs.reload(tab.id, () => {
-          // wait a bit for content script to re-inject
           setTimeout(() => {
             if (typeof fnAfterReload === "function") fnAfterReload(tab.id);
           }, waitMs);
@@ -71,9 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // -------------------------
   // Load UI state
-  // -------------------------
   chrome.storage.local.get(["scan_stats"], (res) => {
     if (res.scan_stats) {
       totalEl.innerText = res.scan_stats.total ?? 0;
@@ -92,9 +83,6 @@ document.addEventListener("DOMContentLoaded", () => {
     highlightLogin.checked = opts.highlightLogin ?? true;
   });
 
-  // -------------------------
-  // Toggle scanning
-  // -------------------------
   toggleBtn.addEventListener("click", () => {
     chrome.storage.local.get(["enabled"], (result) => {
       const newStatus = !result.enabled;
@@ -102,7 +90,6 @@ document.addEventListener("DOMContentLoaded", () => {
       chrome.storage.local.set({ enabled: newStatus }, () => {
         updateButton(newStatus);
 
-        // Reset stats if scanning turned off
         if (!newStatus) {
           chrome.storage.local.set(
             { scan_stats: { total: 0, safe: 0, suspicious: 0 } },
@@ -113,13 +100,11 @@ document.addEventListener("DOMContentLoaded", () => {
             }
           );
 
-          // 🔹 Reload the current page to remove CSS highlights
           getActiveTab((tab) => {
             if (tab && tab.id) chrome.tabs.reload(tab.id);
           });
         }
 
-        // Only rescan when turning ON
         if (newStatus) {
           reloadActiveTabAndThen((tabId) => {
             trySendMessageToTab(tabId, { type: "rescan" });
@@ -129,9 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // -------------------------
   // Option checkboxes
-  // -------------------------
   [highlightNav, highlightLong, highlightLogin].forEach((opt) => {
     opt.addEventListener("change", () => {
       chrome.storage.local.set({
@@ -146,14 +129,11 @@ document.addEventListener("DOMContentLoaded", () => {
         trySendMessageToTab(tabId, { type: "rescan" });
       });
 
-      // 🔥 Reload popup
       location.reload();
     });
   });
 
-  // -------------------------
   // Clear suspicious cache
-  // -------------------------
   clearCacheBtn.addEventListener("click", () => {
     chrome.storage.local.remove("suspicious_cache", () => {
       // Reload page so all highlights are removed
@@ -163,14 +143,12 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // -------------------------
   // Manual check (background)
-  // -------------------------
   manualBtn.addEventListener("click", () => {
     const url = manualInput.value.trim();
     if (!url) return;
 
-    // send to service worker (background.js). handle lastError gracefully.
+    // send to service worker (background.js)
     chrome.runtime.sendMessage({ type: "manualCheck", url }, (response) => {
       if (chrome.runtime.lastError) {
         console.debug("manualCheck failed:", chrome.runtime.lastError.message);
@@ -199,9 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // -------------------------
   // Receive live stats from content script
-  // -------------------------
   chrome.runtime.onMessage.addListener((msg) => {
     if (msg && msg.type === "stats") {
       totalEl.innerText = msg.total ?? 0;
@@ -210,9 +186,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // -------------------------
   // UI helper
-  // -------------------------
   function updateButton(enabled) {
     if (enabled) {
       toggleBtn.className = "main-toggle enabled";
