@@ -29,10 +29,8 @@ def predict(data: UrlFeatures):
     print("Incoming features from frontend:", incoming)
     print("Final model feature vector:", df.to_dict(orient="records"))
 
-    # predict probability
     proba = model.predict_proba(df)[0][1]
 
-    # NEW: more stable threshold
     label = "phishing" if proba >= 0.50 else "legitimate"
 
     return {"label": label, "score": float(proba)}

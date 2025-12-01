@@ -9,9 +9,7 @@ from urllib.parse import urlparse
 
 df = pd.read_csv("phishing_kaggle_dataset.csv")
 
-# ---------------------------------------
 # 32 RESEARCHED FEATURES
-# ---------------------------------------
 selected_features = [
     "NumDots","SubdomainLevel","PathLevel","UrlLength","NumDash",
     "NumDashInHostname","AtSymbol","NumNumericChars","NoHttps","IpAddress",
@@ -24,9 +22,7 @@ selected_features = [
     "AbnormalExtFormActionR","PctExtNullSelfRedirectHyperlinksRT"
 ]
 
-# ---------------------------------------
 # FEATURE AUTO-GENERATION IF NOT IN CSV
-# ---------------------------------------
 if not set(selected_features).issubset(df.columns):
     print("⚠️ Columns missing → generating all features from URL…")
 
@@ -76,16 +72,8 @@ if not set(selected_features).issubset(df.columns):
 
     df[selected_features] = df["URL"].apply(extract_all)
 
-# ---------------------------------------
-# CLEAN LABELS — FIXES YOUR CRASH
-# ---------------------------------------
-
-# Drop completely missing labels
 df = df.dropna(subset=["CLASS_LABEL"])
 
-# Convert labels safely:
-# Acceptable values (any dataset):
-#   1, -1, 0, "phishing", "legit", "good", "bad", etc.
 label_map = {
     1: 1,
     -1: 0,
@@ -99,15 +87,12 @@ label_map = {
 }
 
 df["LABEL"] = df["CLASS_LABEL"].apply(lambda x: label_map.get(x, np.nan))
-df = df.dropna(subset=["LABEL"])  # Remove unmapped
+df = df.dropna(subset=["LABEL"])
 y = df["LABEL"].astype(int)
 
-# Ensure no NaN remains in features
 X = df[selected_features].fillna(0)
 
-# ---------------------------------------
 # TRAINING
-# ---------------------------------------
 cw = compute_class_weight(class_weight="balanced", classes=np.array([0, 1]), y=y)
 
 class_weights = {0: cw[0], 1: cw[1]}
