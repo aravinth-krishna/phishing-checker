@@ -19,7 +19,7 @@ async function checkCertificate(url) {
       return {
         label: "suspicious",
         reason: "Not using HTTPS",
-        score: 0.6,
+        score: 0.7,
       };
     }
 
